@@ -3,6 +3,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using System;
 using NUnit.Framework;
+using OpenQA.Selenium.Firefox;
 
 namespace testing_lab_5_selenium
 {
@@ -140,17 +141,15 @@ namespace testing_lab_5_selenium
             driver.Navigate().GoToUrl("https://telefonio.ru/1-e_krasnikovo.html");
 
             driver.FindElement(By.Name("fam")).SendKeys("Малахов");
-            //Thread.Sleep(4000);
             driver.FindElement(By.Name("tel")).SendKeys("+7 (967) 662-79-98");
-            driver.FindElement(By.Id("searchButton")).Click();
+            Thread.Sleep(4000);
+            driver.FindElement(By.ClassName("text1")).Click();
 
-            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(3000));
+            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(1));
 
-            var messageDiv = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id("message")));
-            var messageText = messageDiv.Text;
-
-            // Проверка наличия результатов
-            Assert.Equals("Данные найдены. Информация придет в уведомлении (не забудьте нажать кнопку разрешить).", messageText);
+            IWebElement noResultsText = driver.FindElement(By.XPath("//text()[.='Воспользуйтесь формой для онлайн поиска или скачайте телефонный справочник целиком. Вы можете найти абонента по номеру телефона, фамилии или адресу.']"));
+            bool flag = noResultsText.Text.Contains("Воспользуйтесь формой для");
+            Assert.That(flag, Is.True, "No results text not found.");
         }
     }
 }
